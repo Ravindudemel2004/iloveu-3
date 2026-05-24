@@ -12,6 +12,7 @@
       --rose-glow: rgba(255, 75, 125, 0.45);
       --bg-dark: #2a0818;
       --bg-deep: #15050d;
+      --gold: #ffd700;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -26,7 +27,23 @@
       font-family: 'Playfair Display', serif;
       color: #fff;
       position: relative;
-      padding: 1rem;
+      cursor: default;
+    }
+
+    /* Cursor Star Trail */
+    .cursor-star {
+      position: fixed;
+      pointer-events: none;
+      font-size: 1.1rem;
+      animation: starFade 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      z-index: 9999;
+      filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.8));
+      will-change: transform, opacity;
+    }
+    @keyframes starFade {
+      0% { transform: translate(-50%, -50%) scale(0.1) rotate(0deg); opacity: 1; }
+      40% { transform: translate(-50%, -50%) scale(1.1) rotate(90deg); opacity: 0.95; }
+      100% { transform: translate(-50%, -50%) scale(0.4) rotate(220deg) translateY(15px); opacity: 0; }
     }
 
     .card {
@@ -60,7 +77,7 @@
       top: auto; left: auto;
     }
 
-    /* Floral Name Styling */
+    /* Floral Name */
     .floral-name {
       font-family: 'Great Vibes', cursive;
       font-size: clamp(3rem, 9vw, 5rem);
@@ -126,24 +143,26 @@
       box-shadow: 0 10px 30px var(--rose-glow);
     }
 
-    /* The Playful No Button */
+    /* Uncappable No Button */
     .btn-no {
       position: fixed;
       padding: 12px 28px;
-      border: 1px solid rgba(255,255,255,0.3);
-      background: rgba(255,255,255,0.1);
-      color: #eee;
+      border: 1px solid rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.12);
+      color: #f8f8f8;
       border-radius: 50px;
       font-size: 1rem;
       font-family: 'Playfair Display', serif;
       font-weight: 600;
-      cursor: pointer;
+      cursor: not-allowed;
       transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
       z-index: 100;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
+      will-change: left, top;
     }
+    .btn-no:hover { background: rgba(255,255,255,0.2); }
 
     .btn-group {
       display: flex;
@@ -170,7 +189,7 @@
       60% { transform: scale(1); }
     }
 
-    /* Final I Love You Text */
+    /* I Love You Reveal */
     .love-reveal {
       font-family: 'Great Vibes', cursive;
       font-size: clamp(2.5rem, 8vw, 4.5rem);
@@ -254,7 +273,6 @@
 <body>
   <div id="particle-container"></div>
   
-  <!-- Card 1: Birthday -->
   <div class="card visible" id="card1">
     <h1>Happy Birthday, My Girl 🌹</h1>
     <div class="name-wrapper">
@@ -271,7 +289,6 @@
     <button class="btn" id="toQuestion">Continue to My Heart 💌</button>
   </div>
 
-  <!-- Card 2: The Question -->
   <div class="card hidden" id="card2">
     <h2>There's something I've wanted to ask...</h2>
     <p class="message">
@@ -285,7 +302,6 @@
     </div>
   </div>
 
-  <!-- Card 3: I Love You -->
   <div class="card hidden" id="card3">
     <h1>🌹 You Made My Dreams Come True 🌹</h1>
     <div class="love-reveal">I Love You, Thisuni 💕</div>
@@ -305,12 +321,33 @@
     const yesBtn = document.getElementById('yesBtn');
     const noBtn = document.getElementById('noBtn');
 
-    // Particle System
+    // 🌟 Cursor Star Trail
+    let lastStarTime = 0;
+    function spawnStar(x, y) {
+      const now = Date.now();
+      if (now - lastStarTime < 40) return;
+      lastStarTime = now;
+
+      const star = document.createElement('div');
+      star.classList.add('cursor-star');
+      star.textContent = Math.random() > 0.6 ? '✨' : '⭐';
+      star.style.left = `${x}px`;
+      star.style.top = `${y}px`;
+      document.body.appendChild(star);
+      setTimeout(() => star.remove(), 950);
+    }
+
+    document.addEventListener('mousemove', (e) => spawnStar(e.clientX, e.clientY));
+    document.addEventListener('touchmove', (e) => {
+      const t = e.touches[0];
+      spawnStar(t.clientX, t.clientY);
+    }, { passive: true });
+
+    // 🌹 Particle System
     function createParticle(type, burst = false) {
       const el = document.createElement('div');
       el.classList.add(type);
-      const emojis = type === 'rose' ? '🌹' : type === 'heart' ? '❤️' : '🌸';
-      el.textContent = emojis;
+      el.textContent = type === 'rose' ? '🌹' : type === 'heart' ? '❤️' : '🌸';
       el.style.left = `${Math.random() * 100}%`;
       el.style.top = type === 'heart' ? '50%' : 'auto';
       el.style.animationDuration = `${Math.random() * 6 + 8}s`;
@@ -353,7 +390,7 @@
       }
     }
 
-    // Card Transitions
+    // 🔄 Card Transitions
     function switchCard(from, to) {
       from.classList.remove('visible');
       from.classList.add('hidden');
@@ -365,23 +402,22 @@
 
     toQuestion.addEventListener('click', () => switchCard(card1, card2));
 
-    // The Uncappable "No" Button
+    // 🚫 Uncappable "No" Button (Always Visible Until Yes)
     let attempts = 0;
     const noTexts = ["No", "Try again 🌸", "Too slow! 🌹", "Not happening 😏", "Think again 💕", "I'll wait forever ✨"];
 
     function placeRandomly(btn) {
-      const margin = 15; // % from edges
-      const safeW = window.innerWidth * (1 - margin * 2 / 100) - btn.offsetWidth;
-      const safeH = window.innerHeight * (1 - margin * 2 / 100) - btn.offsetHeight;
-      
-      const x = Math.random() * safeW + margin * (window.innerWidth / 100);
-      const y = Math.random() * safeH + margin * (window.innerHeight / 100);
+      const margin = 40;
+      const maxX = window.innerWidth - btn.offsetWidth - margin;
+      const maxY = window.innerHeight - btn.offsetHeight - margin;
+      const x = Math.max(margin, Math.random() * maxX);
+      const y = Math.max(margin, Math.random() * maxY);
       
       btn.style.left = `${x}px`;
       btn.style.top = `${y}px`;
     }
 
-    // Initial random placement
+    // Initial placement
     placeRandomly(noBtn);
 
     function evade(e) {
@@ -396,10 +432,16 @@
     noBtn.addEventListener('click', e => e.preventDefault());
     noBtn.addEventListener('contextmenu', e => e.preventDefault());
 
-    // Yes Button Logic
+    // 💖 Yes Button Logic
     function triggerYes() {
       yesBtn.textContent = "Best Decision Ever! 🥹✨";
       yesBtn.disabled = true;
+      
+      // Hide & remove No button gracefully
+      noBtn.style.opacity = '0';
+      noBtn.style.transform = 'scale(0.7)';
+      setTimeout(() => noBtn.remove(), 400);
+      
       burstConfetti();
       setTimeout(() => switchCard(card2, card3), 700);
     }
