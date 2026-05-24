@@ -1,1 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday, My Girl 🌹</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --rose-primary: #ff4b7d;
+      --rose-glow: rgba(255, 75, 125, 0.6);
+    }
 
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(ellipse at top, #3a0c22, #1a0510 80%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      font-family: 'Playfair Display', serif;
+      color: #fff;
+      position: relative;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      padding: 3.5rem 2.5rem;
+      border-radius: 24px;
+      text-align: center;
+      max-width: 550px;
+      width: 90%;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.15);
+      z-index: 10;
+      animation: fadeInUp 1.5s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      margin-bottom: 1.2rem;
+      background: linear-gradient(45deg, #ffb6c1, #ff6b9d, #fff0f5);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 4px 20px var(--rose-glow);
+    }
+
+    .message {
+      font-size: 1.15rem;
+      line-height: 1.9;
+      margin-bottom: 2.5rem;
+      opacity: 0.92;
+      font-weight: 400;
+    }
+
+    .highlight {
+      color: #ffb6c1;
+      font-weight: 600;
+      font-style: italic;
+    }
+
+    .btn {
+      padding: 14px 32px;
+      background: linear-gradient(45deg, #ff4b7d, #ff85a2);
+      border: none;
+      border-radius: 50px;
+      color: white;
+      font-size: 1.05rem;
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(255, 75, 125, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 10px 30px rgba(255, 75, 125, 0.6);
+    }
+
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 60%);
+      opacity: 0;
+      transform: scale(0.5);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .btn:hover::after {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    #rose-container {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .rose {
+      position: absolute;
+      font-size: 2rem;
+      opacity: 0;
+      filter: drop-shadow(0 4px 8px rgba(255, 105, 180, 0.4));
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-15vh) rotate(0deg) scale(0.5); opacity: 0; }
+      10% { opacity: 0.9; transform: translateY(0) rotate(15deg) scale(1); }
+      50% { opacity: 0.95; }
+      90% { opacity: 0.85; }
+      100% { transform: translateY(115vh) rotate(360deg) scale(0.8); opacity: 0; }
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 4px; height: 4px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ffb6c1, 0 0 20px #ff6b9d;
+      animation: twinkle 3s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 2rem 1.5rem; }
+      h1 { font-size: 2.8rem; }
+      .message { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div id="rose-container"></div>
+  
+  <div class="container">
+    <h1>Happy Birthday, My Girl 🌹</h1>
+    <p class="message">
+      Today is all about celebrating the most beautiful soul I know. 
+      Every moment with you feels like a dream I never want to wake up from. 
+      May this year bring you endless joy, love, and all the magic you deserve. 
+      <br><span class="highlight">You are my favorite everything.</span>
+    </p>
+    <button class="btn" id="surpriseBtn">Make a Wish & Tap Here ✨</button>
+  </div>
+
+  <script>
+    const roseContainer = document.getElementById('rose-container');
+    const btn = document.getElementById('surpriseBtn');
+
+    // Create a single rose with randomized properties
+    function createRose(isBurst = false) {
+      const rose = document.createElement('div');
+      rose.classList.add('rose');
+      rose.textContent = '🌹';
+      
+      const size = Math.random() * 1.5 + 1; // 1rem to 2.5rem
+      rose.style.fontSize = `${size}rem`;
+      rose.style.left = `${Math.random() * 100}%`;
+      rose.style.animationDuration = `${Math.random() * 6 + 6}s`;
+      rose.style.animationDelay = `${isBurst ? Math.random() * 0.5 : Math.random() * 3}s`;
+      
+      roseContainer.appendChild(rose);
+      
+      // Clean up after animation completes
+      const duration = parseFloat(rose.style.animationDuration) * 1000;
+      setTimeout(() => {
+        if (rose.parentNode) rose.remove();
+      }, duration + 1000);
+    }
+
+    // Continuous gentle rose rain
+    function startRoseRain() {
+      setInterval(() => createRose(), 900);
+    }
+
+    // Add subtle background sparkles
+    function createSparkles() {
+      for(let i = 0; i < 15; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.classList.add('sparkle');
+        sparkle.style.left = `${Math.random() * 100}%`;
+        sparkle.style.top = `${Math.random() * 100}%`;
+        sparkle.style.animationDelay = `${Math.random() * 3}s`;
+        sparkle.style.animationDuration = `${Math.random() * 2 + 2}s`;
+        document.body.appendChild(sparkle);
+      }
+    }
+
+    // Burst of roses on button click
+    btn.addEventListener('click', () => {
+      const originalText = btn.textContent;
+      btn.textContent = 'Wishing You the Best! 💖';
+      btn.disabled = true;
+      
+      for(let i = 0; i < 25; i++) {
+        setTimeout(() => createRose(true), i * 80);
+      }
+      
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }, 3000);
+    });
+
+    // Initialize
+    startRoseRain();
+    createSparkles();
+  </script>
+</body>
+</html>
